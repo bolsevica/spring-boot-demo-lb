@@ -1,5 +1,6 @@
 node {
    def mvnHome
+   def dockerImage
    stage('Prepare') {
       git 'https://github.com/cicdTrainer/spring-boot-demo.git'
       mvnHome = tool 'maven'
@@ -32,8 +33,13 @@ node {
    stage('Build docker') {
          dockerImage = docker.build("springboot-deploy:${env.BUILD_NUMBER}")
     }
+   stage('Push image') {
+        docker.withRegistry('https://registry.hub.docker.com', 'jenkins-dockerhub') {
+            app.push("${env.BUILD_NUMBER}")
+            app.push("latest")
+        }
+    }
    stage('Deploy docker'){
-          echo "Docker Image Tag Name: ${dockerImageTag}"
           sh "docker stop springboot-deploy || true && docker rm springboot-deploy || true"
           sh "docker run --name springboot-deploy -d -p 8081:8081 springboot-deploy:${env.BUILD_NUMBER}"
     }
