@@ -29,31 +29,12 @@ node {
         bat(/"${mvnHome}\bin\mvn" -Dmaven.test.failure.ignore clean verify/)
      }
    }
-   stage('Sonar') {
-      if (isUnix()) {
-         sh "'${mvnHome}/bin/mvn' sonar:sonar"
-      } else {
-         bat(/"${mvnHome}\bin\mvn" sonar:sonar/)
-      }
-   }
-   stage('Push the Artifacts to Nexus/Jfrog') {
-      if (isUnix()) {
-         sh "'${mvnHome}/bin/mvn' -Dmaven.test.failure.ignore clean deploy"
-      } else {
-         bat(/"${mvnHome}\bin\mvn" -Dmaven.test.failure.ignore clean deploy/)
-      }
-   }
-      stage('Push the Artifacts to Nexus/Jfrog') {
-      if (isUnix()) {
-         sh "'${mvnHome}/bin/mvn' -Dmaven.test.failure.ignore clean deploy"
-      } else {
-         bat(/"${mvnHome}\bin\mvn" -Dmaven.test.failure.ignore clean deploy/)
-      }
-   }
-   stage('Deploy') {
-       sh 'curl -u admin:admin -T target/**.war "http://127.0.0.1:7080/manager/text/deploy?path=/web-demo&update=true"'
-   }
-   stage("Smoke Test"){
-       sh "curl --retry-delay 10 --retry 5 http://127.0.0.1:7080/web-demo/users/1"
-   } 
+   stage('Build docker') {
+         dockerImage = docker.build("springboot-deploy:${env.BUILD_NUMBER}")
+    }
+   stage('Deploy docker'){
+          echo "Docker Image Tag Name: ${dockerImageTag}"
+          sh "docker stop springboot-deploy || true && docker rm springboot-deploy || true"
+          sh "docker run --name springboot-deploy -d -p 8081:8081 springboot-deploy:${env.BUILD_NUMBER}"
+    }
 }
