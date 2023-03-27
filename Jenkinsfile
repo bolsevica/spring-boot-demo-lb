@@ -37,7 +37,7 @@ dockerImage.push()
 stage('Run image') {
 steps{
 script {
-dockerImage.withRun('-p 8081:8080')
+dockerImage.run('-p 8081:8080')
 }
 }
 }
