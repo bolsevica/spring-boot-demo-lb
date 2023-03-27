@@ -11,6 +11,11 @@ steps {
 git 'https://github.com/bolsevica/spring-boot-demo-lb.git'
 }
 }
+stage('Compile') {
+steps {
+sh './mvnw package'
+}
+}
 stage('Building image') {
 steps{
 script {
