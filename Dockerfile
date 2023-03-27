@@ -1,3 +1,3 @@
 FROM openjdk:8-jdk-alpine
-COPY target/webappdemo.war app.jar
+COPY target/webappdemo.jar app.jar
 ENTRYPOINT ["java","-jar","/app.jar"]
