@@ -14,6 +14,8 @@ git 'https://github.com/bolsevica/spring-boot-demo-lb.git'
 stage('Compile') {
 steps {
 sh 'mvn package'
+ sh 'pwd'
+  sh 'ls -lah'
 }
 }
 stage('Building image') {
