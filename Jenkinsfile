@@ -34,10 +34,17 @@ dockerImage.push()
 }
 }
 }
-stage('Cleaning up') {
+stage('Run image') {
 steps{
-sh "docker rmi $registry:$BUILD_NUMBER"
+script {
+dockerImage.withRun('-p 8081:8080')
 }
 }
+}
+//stage('Cleaning up') {
+//steps{
+//sh "docker rmi $registry:$BUILD_NUMBER"
+//}
+//}
 }
 }
